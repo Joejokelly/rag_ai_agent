@@ -1,0 +1,12 @@
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+text = "AI is transforming technology and learning."
+
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=20,
+    chunk_overlap=5
+)
+
+chunks = splitter.split_text(text)
+
+print(chunks)
