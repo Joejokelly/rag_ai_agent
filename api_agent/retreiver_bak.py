@@ -1,36 +1,34 @@
 import os
 import chromadb
+
 from sentence_transformers import SentenceTransformer
 
-# --- Setup paths ---
+print('retriever : before base_dir')
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VECTOR_STORE_PATH = os.path.join(BASE_DIR, "vector_store")
 
-# --- Init DB ---
 client = chromadb.PersistentClient(path=VECTOR_STORE_PATH)
+
+print('retriever get_collection :: rag_docs')
 collection = client.get_collection("rag_docs")
 
-# --- Load embedding model ---
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
+def retrieve_docs(query):
+    print("RETRIEVE: started")
 
-# --- Main function ---
-def get_relevant_docs(query: str, k: int = 2):
-    print("RETRIEVER: started")
-
-    # Embed query
     query_embedding = model.encode([query])
+    print("RAG AGENT: documents retrieved")
 
-    # Query vector DB
+
+
     results = collection.query(
         query_embeddings=query_embedding.tolist(),
-        n_results=k
+        n_results=2
     )
 
-    docs = results.get("documents", [[]])[0]
+    print("RAG AGENT: documents retrieved")
 
-    print(f"RETRIEVER: fetched {len(docs)} docs")
-
-    return docs
-
+    return results["documents"][0]
 
